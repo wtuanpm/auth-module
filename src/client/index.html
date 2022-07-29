@@ -6,22 +6,33 @@
       crossorigin="anonymous"
     ></script>
     <script>
-      const socket = io('http://localhost:3000');
+      const socket = io('http://localhost:3000', {
+        transportOptions: {
+          polling: {
+            extraHeaders: {
+              Authorization:
+                'eyJhbGciOiJIUzI1NiIsIn5cCI6IkpXVCJ9.eyJodHRwOi8vc2NoZW1hcy54bzb2FwLm9yZy93cy8yMDA1LzA1L2lkZW50aXR5L2NsYWltcy9uYW1lIjoiVXNlcmYwZmU3MmZjZDc4ODQzMDA5NmRkNTkwNDk3MzFmY2Y2IiwianRpIjoiZGE3Y2FkOWYtODdjZC00YjE3LWFjZmQtOTQ5NGI0YzNkZGNjIiwiaHR0cDovL3NjaGVtYXMueG1sc29hcC5vcmcvd3MvMjAwNS8wNS9pZGVudGl0eS9jbGFpbXMvbmFtZWlkZW50aWZpZXIiOiJmMGZlNzJmYy1kNzg4LTQzMDAtOTZkZC01OTA0OTczMWZjZjYiLCJ1c2VybmFtZSI6IlVzZXJmMGZlNzJmY2Q3ODg0MzAwOTZkZDU5MDQ5NzMxZmNmNiIsIm5hbWVJZGVudGlmaWVyIjoiZjBmZTcyZmMtZDc4OC00MzAwLTk2ZGQtNTkwNDk3MzFmY2Y2IiwiYWN0aXZlUHJvZmlsZUlkIjoiNmMzZjI0ZmQtZWIyZi00OTFjLTlhYWMtYTk4ZjVjNDA0OTA2IiwiaHR0cDovL3NjaGVtYXMubWljcm9zb2Z0LmNvbS93cy8yMDA4LzA2L2lkZW50aXR5L2NsYWltcy9yb2xlIjoiVXNlcnMiLCJleHAiOjE2NTkxNTI3MDcsImlzcyI6Imh0dHBzOi8vZHBvdGVjaC52biIsImF1ZCI6Imh0dHBzOi8vZHBvdGVjaC52biJ9.8lBQOdthw3H5YPdaoyXZpSnaFlVfGua6VGujhXo3cdg',
+            },
+          },
+        },
+      });
+
       socket.on('connect', function () {
         console.log('Connected');
-
         socket.emit('events', { test: 'test' });
         socket.emit('identity', 0, (response) =>
           console.log('Identity:', response),
         );
 
-        socket.disconnect();
+        setTimeout(() => {
+          socket.disconnect({ userId: 'aaa' });
+        }, 5000);
       });
       socket.on('events', function (data) {
         console.log('event', data);
       });
       socket.on('exception', function (data) {
-        console.log('event', data);
+        console.log('exception', data);
       });
       socket.on('disconnect', function () {
         console.log('Disconnected');

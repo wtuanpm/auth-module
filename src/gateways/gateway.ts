@@ -1,4 +1,4 @@
-import { OnApplicationBootstrap } from '@nestjs/common';
+import { OnApplicationBootstrap, UseGuards } from '@nestjs/common';
 import {
   ConnectedSocket,
   MessageBody,
@@ -8,17 +8,17 @@ import {
   SubscribeMessage,
   WebSocketGateway,
   WebSocketServer,
+  WsException,
   WsResponse,
 } from '@nestjs/websockets';
 import { from, Observable } from 'rxjs';
 import { map } from 'rxjs/operators';
 import { Server } from 'socket.io';
+import { WsGuard } from 'src/auth/guard/ws.guard';
+import { AppConfigService } from 'src/config/config.service';
+import { verifyJwt } from 'src/util/jwt';
 
-@WebSocketGateway({
-  cors: {
-    origin: '*',
-  },
-})
+@WebSocketGateway({ cors: '*:*' })
 export class SocketGateway
   implements
     OnApplicationBootstrap,
@@ -26,21 +26,33 @@ export class SocketGateway
     OnGatewayConnection,
     OnGatewayDisconnect
 {
-  afterInit(server: any) {}
-  handleConnection(client: any, ...args: any[]) {
-    console.log('OnGatewayInit, OnGatewayConnection, OnGatewayDisconnect ');
-  }
-  handleDisconnect(client: any) {
-    console.log('client ', client.id);
-  }
-  onApplicationBootstrap() {
-    this.server.on('disconnect', () => {
-      console.log('aa');
-    });
-  }
   @WebSocketServer()
   server: Server;
 
+  @UseGuards(WsGuard)
+  afterInit(server: any) {}
+
+  handleConnection(client, ...args: any[]) {
+    try {
+      const authorizationToken =
+        client['handshake']['headers']['authorization'];
+      const decoded = verifyJwt(authorizationToken);
+      console.log('decoded', decoded);
+    } catch (err) {
+      client.emit('exception', { error: 'Unauthorized' });
+      client.disconnect();
+    }
+  }
+  handleDisconnect(client: any) {
+    console.log('Disconnected ', client.id);
+  }
+  onApplicationBootstrap() {
+    this.server.on('disconnect', () => {
+      console.log('disconnected');
+    });
+  }
+
+  @UseGuards(WsGuard)
   @SubscribeMessage('events')
   findAll(@MessageBody() data: any): Observable<WsResponse<number>> {
     console.log('data', data);
@@ -54,11 +66,4 @@ export class SocketGateway
     console.log('identity', data);
     return data;
   }
-
-  @SubscribeMessage('disconnected')
-  async disconnect() {
-    console.log('disconnect');
-  }
-
-  // @SubscribeMessage
 }
