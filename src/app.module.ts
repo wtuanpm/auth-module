@@ -3,10 +3,9 @@ import { AppController } from './app.controller';
 import { AppService } from './app.service';
 import { AppConfigModule } from './config/config.module';
 import { GatewayModule } from './gateways/gateway.module';
-import { RedisModule } from './redis/redis.module';
 
 @Module({
-  imports: [AppConfigModule, GatewayModule, RedisModule],
+  imports: [AppConfigModule, GatewayModule],
   controllers: [AppController],
   providers: [AppService],
 })
