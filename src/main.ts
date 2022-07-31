@@ -14,7 +14,7 @@ async function bootstrap() {
   });
 
   app.useWebSocketAdapter(redisIoAdapter);
-  await app.listen(3000);
+  await app.listen(3001);
   console.log(`Application is running on: ${await app.getUrl()}`);
 }
 bootstrap();
