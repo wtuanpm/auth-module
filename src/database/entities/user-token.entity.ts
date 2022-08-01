@@ -19,4 +19,10 @@ export class UserTokens {
     type: 'varchar',
   })
   deviceToken: string;
+
+  @Column({
+    name: 'is_active',
+    type: 'bool',
+  })
+  isActive: boolean;
 }

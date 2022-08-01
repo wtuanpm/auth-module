@@ -4,7 +4,7 @@ import { Column, Entity, PrimaryColumn } from 'typeorm';
 export class BlackList {
   @PrimaryColumn({
     name: 'key',
-    type: 'uuid',
+    type: 'varchar',
   })
   key: string;
   @Column({

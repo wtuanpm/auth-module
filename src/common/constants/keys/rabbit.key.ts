@@ -1,6 +1,7 @@
 export class RabbitKeys {
   static RMQ_EXCHANGE = 'megiservices_event_bus';
   static RMQ_TRAVEL_AUTH_QUEUE = 'Travel.Authentication.Api';
+  static RMQ_WS_TRAVEL_AUTH_QUEUE = 'Ws.Travel.Authentication.Api';
 }
 
 export enum RoutingKeys {

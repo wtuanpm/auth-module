@@ -29,4 +29,4 @@ import { UserTokens } from './entities/user-token.entity';
     }),
   ],
 })
-export class GatewayModule {}
+export class DatabaseModule {}

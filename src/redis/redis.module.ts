@@ -1,9 +1,10 @@
-import { Module } from '@nestjs/common';
+import { Global, Module } from '@nestjs/common';
 import { REDIS } from 'src/common/providers/key.provider';
 import { AppConfigModule } from 'src/config/config.module';
 import { AppConfigService } from 'src/config/config.service';
 import { createClient } from 'redis';
 
+@Global()
 @Module({
   imports: [AppConfigModule],
   providers: [
@@ -17,12 +18,13 @@ import { createClient } from 'redis';
 
         client.on('error', (err) => console.log('Redis Client Error', err));
 
-        client.connect();
+        await client.connect();
 
         return client;
       },
       inject: [AppConfigService],
     },
   ],
+  exports: [REDIS],
 })
 export class RedisModule {}

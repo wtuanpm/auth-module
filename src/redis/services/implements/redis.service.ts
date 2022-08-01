@@ -8,8 +8,8 @@ import {
   RedisScripts,
 } from 'redis';
 import { BlackList } from 'src/database/entities/blacklist.entity';
-import { InjectRepository } from '@nestjs/typeorm';
-import { Repository } from 'typeorm';
+import { BlackListService } from 'src/black-list/services/implements/black-list.service';
+import { createKey } from 'src/util/jwt';
 
 export class RedisService implements IRedisService {
   constructor(
@@ -19,17 +19,14 @@ export class RedisService implements IRedisService {
       RedisFunctions,
       RedisScripts
     >,
-    @InjectRepository(BlackList)
-    private readonly blackListRepository: Repository<BlackList>,
+    private readonly blackListService: BlackListService,
   ) {}
   async addToBlackList(tokenId: string): Promise<BlackList> {
-    await this.redisClient.set(`bl_${tokenId}`, tokenId);
+    const key = createKey(tokenId);
 
-    const created = this.blackListRepository.create({
-      tokenId: tokenId,
-    });
+    await this.redisClient.set(key, tokenId);
 
-    const result = await this.blackListRepository.save(created);
+    const result = this.blackListService.addToBlackList(key, tokenId);
 
     return result;
   }
