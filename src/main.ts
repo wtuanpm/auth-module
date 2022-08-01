@@ -7,13 +7,13 @@ async function bootstrap() {
   const app = await NestFactory.create(AppModule);
   const appConfigService = app.get<AppConfigService>(AppConfigService);
 
-  const redisIoAdapter = new RedisIoAdapter(app);
-  await redisIoAdapter.connectToRedis({
-    password: appConfigService.redisPass,
-    url: appConfigService.redisUrl,
-  });
+  // const redisIoAdapter = new RedisIoAdapter(app);
+  // await redisIoAdapter.connectToRedis({
+  //   password: appConfigService.redisPass,
+  //   url: appConfigService.redisUrl,
+  // });
 
-  app.useWebSocketAdapter(redisIoAdapter);
+  // app.useWebSocketAdapter(redisIoAdapter);
   await app.listen(3000);
   console.log(`Application is running on: ${await app.getUrl()}`);
 }

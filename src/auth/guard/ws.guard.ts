@@ -12,7 +12,6 @@ export class WsGuard implements CanActivate {
       const args = context.getArgs();
       const authorizationToken = args[0].handshake.headers['authorization'];
       const decodedToken = verifyJwt(authorizationToken);
-      console.log('decoded', decodedToken);
       return true;
     } catch (err) {
       console.log('err', err);
